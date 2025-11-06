@@ -1,0 +1,64 @@
+/* 
+ * Tema Jurídico - Lex Virtual
+ * Paleta de colores profesional para facultades de Derecho y bufetes jurídicos
+ */
+
+:root {
+  /* Colores principales - Azul oscuro profesional */
+  --color-primary-dark: #1a2332;
+  --color-primary: #2c3e50;
+  --color-primary-light: #34495e;
+  
+  /* Colores secundarios - Marfil y dorado */
+  --color-secondary: #f5f1e8;
+  --color-secondary-dark: #e8e0d1;
+  --color-accent-gold: #d4af37;
+  --color-accent-gold-light: #e6c857;
+  
+  /* Colores de acento - Vino tinto */
+  --color-accent-wine: #8b2635;
+  --color-accent-wine-light: #a63d4d;
+  
+  /* Grises - Piedra */
+  --color-stone-light: #f8f6f3;
+  --color-stone: #d5c9b8;
+  --color-stone-dark: #b8a890;
+  
+  /* Texto */
+  --color-text-primary: #1a2332;
+  --color-text-secondary: #4a5568;
+  --color-text-muted: #718096;
+  --color-text-light: #ffffff;
+  
+  /* Estados */
+  --color-success: #2d5016;
+  --color-success-light: #4a7c2a;
+  --color-error: #8b2635;
+  --color-error-light: #a63d4d;
+  --color-warning: #d4af37;
+  
+  /* Bordes y sombras */
+  --color-border: #d5c9b8;
+  --color-border-light: #e8e0d1;
+  --shadow-sm: 0 2px 4px rgba(26, 35, 50, 0.08);
+  --shadow-md: 0 4px 12px rgba(26, 35, 50, 0.12);
+  --shadow-lg: 0 8px 24px rgba(26, 35, 50, 0.16);
+  
+  /* Tipografía */
+  --font-heading: 'Merriweather', 'Playfair Display', 'Lora', serif;
+  --font-body: 'Open Sans', 'Roboto', 'Inter', sans-serif;
+  
+  /* Espaciado */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Bordes redondeados */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+

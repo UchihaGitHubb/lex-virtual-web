@@ -1,14 +1,13 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { apiRequest, ApiError } from "../config/api";
 import type { LoginDto, LoginResponseDto } from "../types/auth";
+import Layout from "../components/Layout";
 import styles from "./Login.module.css";
 
 export default function Login() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const role = (location.state as { role?: string })?.role;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -52,9 +51,9 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Preparar datos para enviar al backend
+      // Preparar datos para enviar al backend (normalizar email a minúsculas)
       const loginData: LoginDto = {
-        email,
+        email: email.toLowerCase().trim(),
         password,
       };
 
@@ -117,19 +116,18 @@ export default function Login() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.loginCard}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Iniciar sesión</h1>
-          <p className={styles.subtitle}>
-            {role 
-              ? `Ingresa tus credenciales de ${role} para continuar`
-              : "Ingresa tus credenciales para continuar"}
-          </p>
-        </div>
+    <Layout>
+      <div className={styles.container}>
+        <div className={styles.loginCard}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>Iniciar sesión</h1>
+            <p className={styles.subtitle}>
+              Ingresa tus credenciales para continuar
+            </p>
+          </div>
 
-        <form onSubmit={handleLogin} className={styles.form}>
-          <div className={styles.formGroup}>
+          <form onSubmit={handleLogin} className={styles.form}>
+            <div className={styles.formGroup}>
             <label htmlFor="email" className={styles.label}>
               Email
             </label>
@@ -142,6 +140,13 @@ export default function Login() {
                 // Limpiar error al escribir
                 if (errors.email) {
                   setErrors({ ...errors, email: undefined });
+                }
+              }}
+              onBlur={(e) => {
+                // Normalizar a minúsculas cuando el usuario sale del campo
+                const normalizedEmail = e.target.value.toLowerCase().trim();
+                if (normalizedEmail !== email) {
+                  setEmail(normalizedEmail);
                 }
               }}
               className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
@@ -177,32 +182,26 @@ export default function Login() {
             )}
           </div>
 
-          <button
-            type="submit"
-            className={styles.submitButton}
-            disabled={isLoading}
-          >
-            {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={isLoading}
+            >
+              {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+            </button>
+          </form>
 
-        <div className={styles.footer}>
-          {role && (
+          <div className={styles.footer}>
             <p className={styles.footerText}>
-              <a href="/" className={styles.link}>
-                ← Cambiar rol
+              ¿No tienes cuenta?{" "}
+              <a href="/register" className={styles.link}>
+                Regístrate aquí
               </a>
             </p>
-          )}
-          <p className={styles.footerText}>
-            ¿No tienes cuenta?{" "}
-            <a href="/register" className={styles.link}>
-              Regístrate aquí
-            </a>
-          </p>
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 

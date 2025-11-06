@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { authenticatedRequest, ApiError } from "../config/api";
 import type { ConfirmRoleResponseDto } from "../types/auth";
+import Layout from "../components/Layout";
 import styles from "./Dashboard.module.css";
 
 interface User {
@@ -22,7 +23,7 @@ export default function Dashboard() {
     const userStr = localStorage.getItem("user");
 
     if (!token || !userStr) {
-      // Si no hay token o usuario, redirigir al home
+      // Si no hay token o usuario, redirigir al login
       navigate("/");
       return;
     }
@@ -117,6 +118,10 @@ export default function Dashboard() {
     navigate("/");
   };
 
+  const handleContinue = () => {
+    navigate("/");
+  };
+
   const getRoleLabel = (role: string | null) => {
     if (!role) return "Sin rol asignado";
     
@@ -132,16 +137,19 @@ export default function Dashboard() {
 
   if (!user) {
     return (
-      <div className={styles.container}>
-        <div className={styles.card}>
-          <p>Cargando...</p>
+      <Layout>
+        <div className={styles.container}>
+          <div className={styles.card}>
+            <p style={{ textAlign: 'center', fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary)' }}>Cargando...</p>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className={styles.container}>
+    <Layout>
+      <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
           <h1 className={styles.title}>Dashboard</h1>
@@ -206,12 +214,20 @@ export default function Dashboard() {
         </div>
 
         <div className={styles.footer}>
+          <button 
+            onClick={handleContinue} 
+            className={`${styles.continueButton} ${!user.roleConfirmed ? styles.continueButtonDisabled : ''}`}
+            disabled={!user.roleConfirmed}
+          >
+            {user.roleConfirmed ? "Continuar" : "Confirmar rol primero"}
+          </button>
           <button onClick={handleLogout} className={styles.logoutButton}>
             Cerrar sesión
           </button>
         </div>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 

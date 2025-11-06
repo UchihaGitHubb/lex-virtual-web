@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { apiRequest, ApiError } from "../config/api";
 import type { RegisterDto, RegisterResponseDto } from "../types/auth";
+import Layout from "../components/Layout";
 import styles from "./Register.module.css";
 
 export default function Register() {
@@ -59,9 +60,9 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      // Preparar datos para enviar al backend
+      // Preparar datos para enviar al backend (normalizar email a minúsculas)
       const registerData: RegisterDto = {
-        email,
+        email: email.toLowerCase().trim(),
         password,
         role,
       };
@@ -125,9 +126,10 @@ export default function Register() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.registerCard}>
-        <div className={styles.header}>
+    <Layout>
+      <div className={styles.container}>
+        <div className={styles.registerCard}>
+          <div className={styles.header}>
           <h1 className={styles.title}>Crear cuenta</h1>
           <p className={styles.subtitle}>
             Completa el formulario para registrarte
@@ -148,6 +150,13 @@ export default function Register() {
                 // Limpiar error al escribir
                 if (errors.email) {
                   setErrors({ ...errors, email: undefined });
+                }
+              }}
+              onBlur={(e) => {
+                // Normalizar a minúsculas cuando el usuario sale del campo
+                const normalizedEmail = e.target.value.toLowerCase().trim();
+                if (normalizedEmail !== email) {
+                  setEmail(normalizedEmail);
                 }
               }}
               className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
@@ -221,13 +230,14 @@ export default function Register() {
         <div className={styles.footer}>
           <p className={styles.footerText}>
             ¿Ya tienes cuenta?{" "}
-            <a href="/login" className={styles.link}>
+            <a href="/" className={styles.link}>
               Inicia sesión aquí
             </a>
           </p>
         </div>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 
