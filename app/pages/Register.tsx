@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { apiRequest, ApiError } from "../config/api";
 import type { RegisterDto, RegisterResponseDto } from "../types/auth";
+import type { ValidateGroupCodeResponseDto } from "../types/groups";
 import Layout from "../components/Layout";
 import styles from "./Register.module.css";
 
@@ -11,10 +12,15 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [groupCode, setGroupCode] = useState("");
+  const [validatingCode, setValidatingCode] = useState(false);
+  const [codeValid, setCodeValid] = useState<boolean | null>(null);
+  const [groupInfo, setGroupInfo] = useState<{ name: string; teacher: string } | null>(null);
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
     role?: string;
+    groupCode?: string;
   }>({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,9 +30,63 @@ export default function Register() {
     return emailRegex.test(email);
   };
 
+  // Validar código de grupo
+  const validateGroupCode = async (code: string) => {
+    if (!code || code.trim().length === 0) {
+      setCodeValid(null);
+      setGroupInfo(null);
+      setErrors({ ...errors, groupCode: undefined });
+      return;
+    }
+
+    // Validar formato: numérico de 6-8 caracteres
+    if (!/^\d{6,8}$/.test(code)) {
+      setCodeValid(false);
+      setGroupInfo(null);
+      setErrors({ ...errors, groupCode: "El código debe tener entre 6 y 8 dígitos numéricos" });
+      return;
+    }
+
+    setValidatingCode(true);
+    setErrors({ ...errors, groupCode: undefined });
+
+    try {
+      const response = await apiRequest<ValidateGroupCodeResponseDto>(
+        `/groups/validate/${code}`
+      );
+
+      if (response.valid && response.group) {
+        setCodeValid(true);
+        setGroupInfo({
+          name: response.group.name,
+          teacher: response.group.teacher.email,
+        });
+        setErrors({ ...errors, groupCode: undefined });
+      } else {
+        setCodeValid(false);
+        setGroupInfo(null);
+        setErrors({ ...errors, groupCode: response.message || "Este código no existe" });
+      }
+    } catch (error) {
+      setCodeValid(false);
+      setGroupInfo(null);
+      if (error instanceof ApiError) {
+        if (error.statusCode === 404) {
+          setErrors({ ...errors, groupCode: "Este código no existe" });
+        } else {
+          setErrors({ ...errors, groupCode: error.message || "Error al validar el código" });
+        }
+      } else {
+        setErrors({ ...errors, groupCode: "Error de conexión. Verifica tu conexión a internet." });
+      }
+    } finally {
+      setValidatingCode(false);
+    }
+  };
+
   // Validación del formulario
   const validateForm = (): boolean => {
-    const newErrors: { email?: string; password?: string; role?: string } = {};
+    const newErrors: { email?: string; password?: string; role?: string; groupCode?: string } = {};
 
     if (!email) {
       newErrors.email = "El email es requerido";
@@ -42,6 +102,11 @@ export default function Register() {
 
     if (!role) {
       newErrors.role = "Debes seleccionar un rol";
+    }
+
+    // Si es estudiante, el código de grupo es opcional pero si se ingresa debe ser válido
+    if (role === "student" && groupCode && groupCode.trim().length > 0 && codeValid === false) {
+      newErrors.groupCode = "El código de grupo no es válido";
     }
 
     setErrors(newErrors);
@@ -65,6 +130,10 @@ export default function Register() {
         email: email.toLowerCase().trim(),
         password,
         role,
+        // Solo incluir groupCode si es estudiante y el código es válido
+        ...(role === "student" && groupCode && groupCode.trim().length > 0 && codeValid === true
+          ? { groupCode: groupCode.trim() }
+          : {}),
       };
 
       // Llamada al endpoint de registro
@@ -98,9 +167,16 @@ export default function Register() {
           case 400: // Bad Request - Error de validación
             // Si hay múltiples mensajes, mostrar el primero
             const validationMessage = error.messages.join(", ");
-            setErrors({ 
-              email: validationMessage 
-            });
+            // Si el mensaje menciona código de grupo, asignarlo al campo correspondiente
+            if (validationMessage.toLowerCase().includes("código") || validationMessage.toLowerCase().includes("code") || validationMessage.toLowerCase().includes("grupo") || validationMessage.toLowerCase().includes("group")) {
+              setErrors({ 
+                groupCode: validationMessage 
+              });
+            } else {
+              setErrors({ 
+                email: validationMessage 
+              });
+            }
             break;
           
           case 500: // Internal Server Error
@@ -201,6 +277,12 @@ export default function Register() {
               value={role}
               onChange={(e) => {
                 setRole(e.target.value);
+                // Limpiar código de grupo si cambia el rol
+                if (e.target.value !== "student") {
+                  setGroupCode("");
+                  setCodeValid(null);
+                  setGroupInfo(null);
+                }
                 // Limpiar error al seleccionar
                 if (errors.role) {
                   setErrors({ ...errors, role: undefined });
@@ -217,6 +299,57 @@ export default function Register() {
               <span className={styles.errorMessage}>{errors.role}</span>
             )}
           </div>
+
+          {role === "student" && (
+            <div className={styles.formGroup}>
+              <label htmlFor="groupCode" className={styles.label}>
+                Código de Clase (Opcional)
+              </label>
+              <input
+                id="groupCode"
+                type="text"
+                value={groupCode}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, ""); // Solo números
+                  setGroupCode(value);
+                  // Limpiar estado de validación al cambiar
+                  if (codeValid !== null) {
+                    setCodeValid(null);
+                    setGroupInfo(null);
+                  }
+                  if (errors.groupCode) {
+                    setErrors({ ...errors, groupCode: undefined });
+                  }
+                }}
+                onBlur={(e) => {
+                  // Validar código cuando el usuario sale del campo
+                  if (e.target.value.trim().length > 0) {
+                    validateGroupCode(e.target.value.trim());
+                  }
+                }}
+                className={`${styles.input} ${errors.groupCode ? styles.inputError : ""} ${codeValid === true ? styles.inputValid : ""}`}
+                placeholder="123456"
+                disabled={isLoading || validatingCode}
+                maxLength={8}
+              />
+              {validatingCode && (
+                <span className={styles.validatingText}>Validando código...</span>
+              )}
+              {codeValid === true && groupInfo && (
+                <div className={styles.groupInfo}>
+                  <span className={styles.groupInfoText}>
+                    ✓ Grupo: {groupInfo.name} - Profesor: {groupInfo.teacher}
+                  </span>
+                </div>
+              )}
+              {errors.groupCode && (
+                <span className={styles.errorMessage}>{errors.groupCode}</span>
+              )}
+              <p className={styles.helpText}>
+                Ingresa el código de 6-8 dígitos que te proporcionó tu profesor
+              </p>
+            </div>
+          )}
 
           <button
             type="submit"

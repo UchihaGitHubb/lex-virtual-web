@@ -20,6 +20,7 @@ export interface RegisterDto {
   email: string;
   password: string;
   role: string; // El backend espera "role" no "rol"
+  groupCode?: string; // Código de grupo opcional para estudiantes (HU_6.4.2)
 }
 
 // El registro exitoso devuelve la misma respuesta que login

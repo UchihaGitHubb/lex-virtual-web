@@ -1,11 +1,40 @@
 import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import NavigationMenu from "./NavigationMenu";
 import styles from "./Layout.module.css";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
+interface User {
+  role: string | null;
+}
+
 export default function Layout({ children }: LayoutProps) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    const token = localStorage.getItem("access_token");
+    
+    if (userStr && token)
+       {
+      try {
+        const userData = JSON.parse(userStr) as User;
+        setUser(userData);
+      } catch (error) {
+        console.error("Error al parsear usuario:", error);
+      }
+    }
+  }, []);
+
+  // Ocultar menú en páginas de autenticación
+  const hideMenu = typeof window !== "undefined" && 
+    (window.location.pathname === "/" || 
+     window.location.pathname === "/login" || 
+     window.location.pathname === "/register");
+
   return (
     <div className={styles.layout}>
       <header className={styles.header}>
@@ -49,6 +78,8 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </div>
       </header>
+
+      {user && !hideMenu && <NavigationMenu userRole={user.role} />}
 
       <main className={styles.main}>{children}</main>
 
