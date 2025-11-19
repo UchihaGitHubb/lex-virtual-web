@@ -24,12 +24,21 @@ Si no configuras la variable de entorno, el sistema intentará usar el backend p
 
 ## Datos incluidos
 
-### Estudiantes de ejemplo
+### Estudiantes de ejemplo (Panel del Profesor)
 
 1. **María González** - 3 casos completados
 2. **Juan Pérez** - 5 casos completados
 3. **Ana Martínez** - 2 casos completados
 4. **Carlos Rodríguez** - 4 casos completados
+
+### Perfil de Estudiante de ejemplo (Panel del Estudiante)
+
+**María González** - Perfil completo con:
+- 5 casos completados
+- Estadísticas generales
+- Métricas detalladas por caso
+- Retroalimentaciones del profesor (texto y voz)
+- Gráficos de nerviosismo por etapa
 
 ### Casos de ejemplo
 
@@ -59,7 +68,7 @@ Cada caso incluye datos para 4 etapas:
 
 ## Navegación de ejemplo
 
-Para probar el sistema completo:
+### Para probar el Panel del Profesor:
 
 1. Inicia sesión como docente
 2. Ve al Dashboard y confirma tu rol
@@ -68,6 +77,17 @@ Para probar el sistema completo:
 5. Haz clic en cualquier estudiante para ver sus detalles
 6. Selecciona diferentes casos para ver las métricas
 7. Prueba el formulario de feedback (texto y voz)
+
+### Para probar el Panel del Estudiante:
+
+1. Inicia sesión como estudiante (usa cualquier email/password válido)
+2. Ve al Dashboard y confirma tu rol
+3. Haz clic en "Continuar" para ir a "Mi Perfil"
+4. Explora las 4 pestañas:
+   - **Perfil**: Información personal y resumen
+   - **Progreso**: 5 casos completados con métricas detalladas
+   - **Estadísticas**: Métricas generales y por etapa
+   - **Retroalimentaciones**: Comentarios del profesor (texto y voz)
 
 ## IDs de ejemplo
 

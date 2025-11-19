@@ -2,12 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { authenticatedRequest, ApiError } from "../config/api";
 import type { StudentListItemDto } from "../types/tracking";
-import { mockStudents } from "../data/mockData";
 import Layout from "../components/Layout";
 import styles from "./Tracking.module.css";
-
-// Modo de desarrollo: usar datos mock si no hay conexión al backend
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === "true" || false;
 
 export default function Tracking() {
   const navigate = useNavigate();
@@ -29,15 +25,6 @@ export default function Tracking() {
     setIsLoading(true);
     setError(null);
 
-    // Si está en modo mock, usar datos de ejemplo
-    if (USE_MOCK_DATA) {
-      // Simular delay de red
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setStudents(mockStudents);
-      setIsLoading(false);
-      return;
-    }
-
     try {
       // Llamada al endpoint de lista de estudiantes
       const response = await authenticatedRequest<StudentListItemDto[]>(
@@ -46,14 +33,6 @@ export default function Tracking() {
       setStudents(response);
     } catch (error) {
       console.error("Error al cargar estudiantes:", error);
-      
-      // Si falla y estamos en desarrollo, usar datos mock como fallback
-      if (import.meta.env.DEV) {
-        console.warn("Usando datos mock como fallback");
-        setStudents(mockStudents);
-        setIsLoading(false);
-        return;
-      }
       
       if (error instanceof ApiError) {
         if (error.statusCode === 401) {

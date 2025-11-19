@@ -85,8 +85,8 @@ export default function StudentFeedbacks() {
               <button onClick={loadFeedbacks} className={styles.retryButton}>
                 Reintentar
               </button>
-              <button onClick={() => navigate("/dashboard")} className={styles.backButton}>
-                Volver al Dashboard
+              <button onClick={() => navigate("/student-profile")} className={styles.backButton}>
+                Volver al Perfil
               </button>
             </div>
           </div>
@@ -177,10 +177,10 @@ export default function StudentFeedbacks() {
 
           <div className={styles.footer}>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/student-profile")}
               className={styles.backButton}
             >
-              Volver al Dashboard
+              Volver al Perfil
             </button>
           </div>
         </div>

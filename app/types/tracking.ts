@@ -134,3 +134,40 @@ export function getStageLabel(stage: TrialStage): string {
       return stage;
   }
 }
+
+// Tipos para el panel del estudiante
+export interface StudentProfileDto {
+  studentId: string;
+  email: string;
+  name: string;
+  lastName: string;
+  createdAt: string;
+  totalCasesCompleted: number;
+  averageScore?: number;
+  totalPracticeTimeSeconds?: number;
+}
+
+export interface StudentCaseProgressDto {
+  caseId: string;
+  caseNumber: number;
+  completedAt: string;
+  status: "completed" | "in_progress" | "not_started";
+  totalTimeSeconds: number;
+  performanceMetrics?: PerformanceMetricsDto;
+  nerviosismChart?: NerviosismChartDto;
+  feedbacks?: FeedbackResponseDto[];
+}
+
+export interface StudentOverallStatsDto {
+  totalCasesCompleted: number;
+  totalPracticeTimeSeconds: number;
+  averageHeartRateBpm?: number;
+  averageNerviosismLevel?: NerviosismLevel;
+  totalFillerWords?: number;
+  totalInterruptions?: number;
+  casesByStage?: {
+    stage: TrialStage;
+    count: number;
+    averageTimeSeconds: number;
+  }[];
+}

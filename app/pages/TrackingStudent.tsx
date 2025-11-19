@@ -8,21 +8,11 @@ import type {
   NerviosismChartDto,
   FeedbackResponseDto,
 } from "../types/tracking";
-import {
-  mockStudents,
-  getMockStudentDetails,
-  getMockPerformanceMetrics,
-  getMockNerviosismChart,
-  getMockFeedback,
-} from "../data/mockData";
 import Layout from "../components/Layout";
 import StudentDetails from "../components/tracking/StudentDetails";
 import NerviosismChart from "../components/tracking/NerviosismChart";
 import FeedbackForm from "../components/tracking/FeedbackForm";
 import styles from "./TrackingStudent.module.css";
-
-// Modo de desarrollo: usar datos mock si no hay conexión al backend
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === "true" || false;
 
 interface TrackingStudentProps {
   studentId: string;
@@ -58,14 +48,6 @@ export default function TrackingStudent({ studentId }: TrackingStudentProps) {
   }, [studentId]);
 
   const loadStudentsList = async () => {
-    if (USE_MOCK_DATA) {
-      const ids = mockStudents.map((s) => s.studentId);
-      setStudentsList(ids);
-      const index = ids.indexOf(studentId);
-      if (index !== -1) setCurrentIndex(index);
-      return;
-    }
-
     try {
       const response = await authenticatedRequest<StudentListItemDto[]>(
         "/tracking/students"
@@ -76,37 +58,13 @@ export default function TrackingStudent({ studentId }: TrackingStudentProps) {
       if (index !== -1) setCurrentIndex(index);
     } catch (error) {
       console.error("Error al cargar lista de estudiantes:", error);
-      // Fallback a datos mock en desarrollo
-      if (import.meta.env.DEV) {
-        const ids = mockStudents.map((s) => s.studentId);
-        setStudentsList(ids);
-        const index = ids.indexOf(studentId);
-        if (index !== -1) setCurrentIndex(index);
-      }
+      // No hacer nada si falla, la lista se mantendrá vacía
     }
   };
 
   const loadStudentDetails = async () => {
     setIsLoading(true);
     setError(null);
-
-    // Si está en modo mock, usar datos de ejemplo
-    if (USE_MOCK_DATA) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const studentData = getMockStudentDetails(studentId);
-      if (studentData) {
-        setStudent(studentData);
-        if (studentData.cases && studentData.cases.length > 0) {
-          const firstCase = studentData.cases[0];
-          setSelectedCaseId(firstCase.caseId);
-          await loadCaseDetails(firstCase.caseId);
-        }
-      } else {
-        setError("Estudiante no encontrado.");
-      }
-      setIsLoading(false);
-      return;
-    }
 
     try {
       // Cargar detalles del estudiante
@@ -124,22 +82,6 @@ export default function TrackingStudent({ studentId }: TrackingStudentProps) {
     } catch (error) {
       console.error("Error al cargar detalles del estudiante:", error);
 
-      // Fallback a datos mock en desarrollo
-      if (import.meta.env.DEV) {
-        console.warn("Usando datos mock como fallback");
-        const studentData = getMockStudentDetails(studentId);
-        if (studentData) {
-          setStudent(studentData);
-          if (studentData.cases && studentData.cases.length > 0) {
-            const firstCase = studentData.cases[0];
-            setSelectedCaseId(firstCase.caseId);
-            await loadCaseDetails(firstCase.caseId);
-          }
-          setIsLoading(false);
-          return;
-        }
-      }
-
       if (error instanceof ApiError) {
         if (error.statusCode === 401) {
           navigate("/");
@@ -155,19 +97,6 @@ export default function TrackingStudent({ studentId }: TrackingStudentProps) {
   };
 
   const loadCaseDetails = async (caseId: string) => {
-    // Si está en modo mock, usar datos de ejemplo
-    if (USE_MOCK_DATA) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      const metrics = getMockPerformanceMetrics(caseId);
-      const chart = getMockNerviosismChart(caseId);
-      const feedbackData = getMockFeedback(caseId);
-      
-      setPerformanceMetrics(metrics);
-      setNerviosismChart(chart);
-      setFeedback(feedbackData);
-      return;
-    }
-
     try {
       // Cargar métricas de desempeño del caso
       const metrics = await authenticatedRequest<PerformanceMetricsDto>(
@@ -183,13 +112,7 @@ export default function TrackingStudent({ studentId }: TrackingStudentProps) {
         setNerviosismChart(chart);
       } catch (chartError) {
         console.error("Error al cargar gráfico de nerviosismo:", chartError);
-        // Fallback a datos mock en desarrollo
-        if (import.meta.env.DEV) {
-          const mockChart = getMockNerviosismChart(caseId);
-          setNerviosismChart(mockChart);
-        } else {
-          setNerviosismChart(null);
-        }
+        setNerviosismChart(null);
       }
 
       // Cargar feedback del caso
@@ -200,32 +123,13 @@ export default function TrackingStudent({ studentId }: TrackingStudentProps) {
         setFeedback(feedbackData);
       } catch (feedbackError) {
         console.error("Error al cargar feedback:", feedbackError);
-        // Fallback a datos mock en desarrollo
-        if (import.meta.env.DEV) {
-          const mockFeedbackData = getMockFeedback(caseId);
-          setFeedback(mockFeedbackData);
-        } else {
-          setFeedback([]);
-        }
+        setFeedback([]);
       }
     } catch (error) {
       console.error("Error al cargar detalles del caso:", error);
-      
-      // Fallback a datos mock en desarrollo
-      if (import.meta.env.DEV) {
-        console.warn("Usando datos mock como fallback");
-        const metrics = getMockPerformanceMetrics(caseId);
-        const chart = getMockNerviosismChart(caseId);
-        const feedbackData = getMockFeedback(caseId);
-        
-        setPerformanceMetrics(metrics);
-        setNerviosismChart(chart);
-        setFeedback(feedbackData);
-      } else {
-        setPerformanceMetrics(null);
-        setNerviosismChart(null);
-        setFeedback([]);
-      }
+      setPerformanceMetrics(null);
+      setNerviosismChart(null);
+      setFeedback([]);
     }
   };
 

@@ -243,33 +243,6 @@
   border-bottom-color: var(--color-accent-wine);
 }
 
-.inputValid {
-  border-color: var(--color-success) !important;
-}
-
-.validatingText {
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  font-style: italic;
-  margin-top: var(--spacing-xs);
-}
-
-.groupInfo {
-  margin-top: var(--spacing-sm);
-  padding: var(--spacing-sm);
-  background: rgba(72, 187, 120, 0.1);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-success);
-}
-
-.groupInfoText {
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  color: var(--color-success);
-  font-weight: 500;
-}
-
 .helpText {
   font-family: var(--font-body);
   font-size: 0.75rem;

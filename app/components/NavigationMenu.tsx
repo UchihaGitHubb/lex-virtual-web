@@ -33,11 +33,18 @@ export default function NavigationMenu({ userRole }: NavigationMenuProps) {
           {isStudent && (
             <>
               <Link
+                to="/student-profile"
+                className={`${styles.navItem} ${isActive("/student-profile") ? styles.active : ""}`}
+              >
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Mi Perfil</span>
+              </Link>
+              <Link
                 to="/my-feedbacks"
                 className={`${styles.navItem} ${isActive("/my-feedbacks") ? styles.active : ""}`}
               >
                 <span className={styles.navIcon}>📝</span>
-                <span className={styles.navText}>Mis Retroalimentaciones</span>
+                <span className={styles.navText}>Retroalimentaciones</span>
               </Link>
             </>
           )}

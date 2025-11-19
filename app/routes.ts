@@ -6,5 +6,6 @@ export default [
   route("dashboard", "routes/dashboard.tsx"),
   route("tracking", "routes/tracking.tsx"),
   route("tracking/student/:studentId", "routes/tracking-student.tsx"),
+  route("student-profile", "routes/student-profile.tsx"),
   route("my-feedbacks", "routes/student-feedbacks.tsx"),
 ] satisfies RouteConfig;
