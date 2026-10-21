@@ -1,3 +1,5 @@
+**Demo en vivo:** [lex-virtual-demo.vercel.app](https://lex-virtual-demo.vercel.app) — entra como docente o estudiante con datos de ejemplo, sin backend.
+
 # 📖 Guía de Instalación - Lex Virtual Web Frontend
 
 Esta guía te ayudará a configurar y ejecutar el frontend de Lex Virtual en otro PC.
