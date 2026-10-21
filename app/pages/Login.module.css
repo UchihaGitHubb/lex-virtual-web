@@ -229,6 +229,49 @@
   border-bottom-color: var(--color-accent-wine);
 }
 
+/* Modo demo */
+.demoBox {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--color-secondary);
+  border: 1px solid var(--color-accent-gold);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.demoText {
+  margin: 0 0 var(--spacing-md);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+}
+
+.demoButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+}
+
+.demoButton {
+  flex: 1 1 160px;
+  min-height: 44px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--color-primary-dark);
+  background: var(--color-accent-gold);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.demoButton:hover {
+  background: var(--color-accent-gold-light);
+}
+
 /* Responsivo */
 @media (max-width: 480px) {
   .loginCard {

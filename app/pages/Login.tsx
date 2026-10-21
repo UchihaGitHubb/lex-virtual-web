@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { apiRequest, ApiError } from "../config/api";
+import { DEMO_MODE, startDemoSession, type DemoRole } from "../config/demo";
 import type { LoginDto, LoginResponseDto } from "../types/auth";
 import Layout from "../components/Layout";
 import styles from "./Login.module.css";
@@ -37,6 +38,11 @@ export default function Login() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleDemoLogin = (role: DemoRole) => {
+    startDemoSession(role);
+    navigate(role === "teacher" ? "/tracking" : "/student-profile");
   };
 
   // Función de login integrada con backend
@@ -125,6 +131,30 @@ export default function Login() {
               Ingresa tus credenciales para continuar
             </p>
           </div>
+
+          {DEMO_MODE && (
+            <div className={styles.demoBox}>
+              <p className={styles.demoText}>
+                Versión de demostración con datos de ejemplo. Entra sin registrarte:
+              </p>
+              <div className={styles.demoButtons}>
+                <button
+                  type="button"
+                  className={styles.demoButton}
+                  onClick={() => handleDemoLogin("teacher")}
+                >
+                  Entrar como docente
+                </button>
+                <button
+                  type="button"
+                  className={styles.demoButton}
+                  onClick={() => handleDemoLogin("student")}
+                >
+                  Entrar como estudiante
+                </button>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleLogin} className={styles.form}>
             <div className={styles.formGroup}>

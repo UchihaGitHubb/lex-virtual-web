@@ -1,4 +1,6 @@
 // Configuración de la API
+import { DEMO_MODE, demoResponse } from "./demo";
+
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -22,6 +24,10 @@ export async function apiRequest<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
+  if (DEMO_MODE) {
+    return demoResponse<T>(endpoint, options);
+  }
+
   const url = `${API_BASE_URL}${endpoint}`;
 
   try {
@@ -92,6 +98,10 @@ export async function uploadFile(
   fileName: string,
   endpoint: string = "/upload/audio"
 ): Promise<{ url: string }> {
+  if (DEMO_MODE) {
+    return demoResponse<{ url: string }>(endpoint, { method: "POST" });
+  }
+
   const token = localStorage.getItem("access_token");
 
   if (!token) {

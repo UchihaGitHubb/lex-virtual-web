@@ -1,0 +1,5 @@
+{
+  "buildCommand": "react-router build",
+  "outputDirectory": "build/client",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
